@@ -16,20 +16,27 @@ function handleInput(event) {
     event.preventDefault();
 
     const valueInput = inputFormEl.value.trim()
+    if (valueInput === '') {
+        return  (listCountryEl.innerHTML = ('')), (infoCountryEl.innerHTML = (''))
+    }
  
    fetchCountries(valueInput)
         .then(data => {
             listCountryEl.innerHTML = ('')
             infoCountryEl.innerHTML = ('')
-            if (data.length === 1) {
+        if (data.length === 1) {
                 listCountryEl.insertAdjacentHTML('beforeend', renderListCountry(data))
                 infoCountryEl.insertAdjacentHTML('beforeend', renderInfoCountry(data))
             } else if (data.length >= 10) {
                 Notify.info('Too many matches found. Please enter a more specific name.');
                 return;
+        } else {
+            listCountryEl.insertAdjacentHTML('beforeend', renderListCountry(data))
             }
         })
-        .catch(error => {
+       .catch(error => {
+            listCountryEl.innerHTML = ('')
+            infoCountryEl.innerHTML = ('')
             Notify.failure('Oops, there is no country with that name')
             
             console.warn(error)
@@ -40,7 +47,7 @@ function renderListCountry(data) {
             .map(({ name, flags }) => {
                 return `
           <li class="country-list__item">
-              <img class="country-list__flag" src="${flags.svg}" alt="Flag of ${name.official}" width = 100px height = 30px>
+              <img class="country-list__flag" src="${flags.svg}" alt="Flag of ${name.official}" width = 30px height = 30px>
               <h2 class="country-list__name">${name.official}</h2>
           </li>
           `
